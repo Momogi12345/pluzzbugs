@@ -1,0 +1,7 @@
+{
+  "name": "PluzzBugs",
+  "type": "module",
+  "scripts": {
+    "start": "index.js"
+  }
+}
