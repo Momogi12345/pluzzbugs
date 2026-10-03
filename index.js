@@ -99,8 +99,8 @@ async function startBot() {
             '*Menu Bot*',
             '',
             '1. ping',
-            '2. hard-bug'
-            '3. mid-bug'
+            '2. hard-bug',
+            '3. mid-bug',
             '4. low-bug'
           ].join('\n')
         })
