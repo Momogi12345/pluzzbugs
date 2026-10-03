@@ -4,6 +4,7 @@ import makeWASocket, {
 } from 'baileys'
 
 const phoneNumber = '6285788995899'
+const allowedSender = '6285788995899'
 
 async function startBot() {
   const { state, saveCreds } =
@@ -19,12 +20,7 @@ async function startBot() {
   sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect, qr } = update
 
-    console.log('Status koneksi:', connection)
-
-    /*
-     * Jangan meminta pairing code saat connection === undefined.
-     * Tunggu sampai connecting atau QR tersedia.
-     */
+    // Pairing code hanya diminta satu kali saat login pertama.
     if (
       !state.creds.registered &&
       !pairingCodeRequested &&
@@ -33,46 +29,34 @@ async function startBot() {
       pairingCodeRequested = true
 
       try {
-        // Beri waktu agar koneksi WebSocket siap
+        // Beri waktu agar koneksi WebSocket siap.
         await new Promise((resolve) => setTimeout(resolve, 3000))
 
         const code = await sock.requestPairingCode(phoneNumber)
 
-        console.log('')
-        console.log('================================')
-        console.log('PAIRING CODE:', code)
-        console.log('================================')
-        console.log('')
+        console.log(`\nPairing code: ${code}`)
         console.log(
-          'Buka WhatsApp > Perangkat tertaut > Tautkan perangkat > Tautkan dengan nomor telepon'
+          'WhatsApp > Perangkat tertaut > Tautkan perangkat > Tautkan dengan nomor telepon\n'
         )
       } catch (error) {
         pairingCodeRequested = false
-        console.error(
-          'Gagal meminta pairing code:',
-          error?.message || error
-        )
+        console.error('Gagal meminta pairing code:', error?.message || error)
       }
     }
 
     if (connection === 'open') {
-      console.log('Bot berhasil terhubung ke WhatsApp')
+      console.log('Bot berhasil terhubung ke WhatsApp.')
     }
 
     if (connection === 'close') {
-      const statusCode =
-        lastDisconnect?.error?.output?.statusCode
-
-      console.log('Koneksi tertutup:', statusCode)
+      const statusCode = lastDisconnect?.error?.output?.statusCode
 
       if (statusCode === DisconnectReason.loggedOut) {
-        console.log(
-          'Sesi logout. Hapus folder auth_info lalu jalankan ulang.'
-        )
+        console.error('Sesi logout. Hapus folder auth_info lalu jalankan ulang.')
         return
       }
 
-      console.log('Mencoba terhubung kembali dalam 5 detik...')
+      console.error('Koneksi terputus. Mencoba terhubung kembali dalam 5 detik...')
 
       setTimeout(() => {
         startBot()
@@ -80,45 +64,81 @@ async function startBot() {
     }
   })
 
-  // Simpan credential login
+  // Simpan credential login.
   sock.ev.on('creds.update', saveCreds)
 
-  // Menerima pesan
+  // Hanya memproses pesan dari nomor yang diizinkan.
   sock.ev.on('messages.upsert', async ({ messages, type }) => {
     if (type !== 'notify') return
 
     for (const message of messages) {
-      if (!message.message) continue
-      if (message.key.fromMe) continue
+      if (!message.message || message.key.fromMe) continue
+
+      // Pada chat pribadi, pengirim ada di remoteJid.
+      // Pada grup, pengirim sebenarnya ada di participant.
+      const senderJid =
+        message.key.participant || message.key.remoteJid || ''
+
+      const senderNumber = senderJid.split('@')[0]
+
+      // Pesan dari nomor lain diabaikan sepenuhnya tanpa console.log.
+      if (senderNumber !== allowedSender) continue
 
       const jid = message.key.remoteJid
 
       const text =
         message.message.conversation ||
         message.message.extendedTextMessage?.text ||
+        message.message.imageMessage?.caption ||
+        message.message.videoMessage?.caption ||
         ''
 
-      const command = text.toLowerCase().trim()
+      const input = text.trim()
 
-      console.log(`${jid}: ${text}`)
+      // Abaikan pesan yang bukan command.
+      if (!input.startsWith('.')) continue
 
-      if (command === 'ping') {
-        await sock.sendMessage(jid, {
-          text: 'pong'
-        })
-      }
+      const parts = input.slice(1).trim().split(/\s+/)
+      const command = parts[0]?.toLowerCase()
 
-      if (command === 'menu') {
-        await sock.sendMessage(jid, {
-          text: [
-            '*Menu Bot*',
-            '',
-            '1. ping',
-            '2. hard-bug',
-            '3. mid-bug',
-            '4. low-bug'
-          ].join('\n')
-        })
+      switch (command) {
+        case 'menu':
+          await sock.sendMessage(jid, {
+            text: [
+              '*╭───〔 BOT MENU 〕───╮*',
+              '*│*',
+              '*│*  *Perintah tersedia:*',
+              '*│*  • *.menu* — tampilkan menu',
+              '*│*  • *.ping* — cek koneksi bot',
+              '*│*',
+              '*╰──────────────────╯*',
+              '',
+              '_Ketik salah satu command di atas._'
+            ].join('\n')
+          })
+          break
+
+        case 'ping':
+          await sock.sendMessage(jid, {
+            text: [
+              '*╭───〔 STATUS 〕───╮*',
+              '*│*',
+              '*│*  *Pong!*',
+              '*│*  Bot aktif dan siap menerima pesan.',
+              '*│*',
+              '*╰────────────────╯*'
+            ].join('\n')
+          })
+          break
+
+        default:
+          await sock.sendMessage(jid, {
+            text: [
+              '*Command tidak tersedia.*',
+              '',
+              'Ketik *.menu* untuk melihat command yang bisa digunakan.'
+            ].join('\n')
+          })
       }
     }
   })
