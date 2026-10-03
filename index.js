@@ -82,23 +82,25 @@ async function startBot() {
   // Save updated login credentials.
   sock.ev.on('creds.update', saveCreds)
 
-  // Receive and process messages.
+  // Receive and process messages sent by the account owner, including
+  // commands sent in private chats, the self-chat, and groups.
   sock.ev.on('messages.upsert', async ({ messages, type }) => {
     if (type !== 'notify') return
 
     for (const message of messages) {
-      if (!message.message || message.key.fromMe) continue
+      if (!message.message) continue
 
       // For private chats use remoteJid; for groups use participant.
-      const senderJid =
-        message.key.participant || message.key.remoteJid || ''
+      const remoteJid = message.key.remoteJid || ''
+      const senderJid = message.key.participant || remoteJid
 
       const senderNumber = senderJid.split('@')[0]
+      // `fromMe` means the command was sent by the logged-in account.
+      // This allows commands in the self-chat, private chats, and groups.
+      // Incoming messages are still restricted to the allowed number.
+      if (!message.key.fromMe && senderNumber !== allowedSender) continue
 
-      // Ignore messages from every other number without logging them.
-      if (senderNumber !== allowedSender) continue
-
-      const jid = message.key.remoteJid
+      const jid = remoteJid
 
       const text =
         message.message.conversation ||
