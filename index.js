@@ -124,14 +124,14 @@ async function startBot() {
                url: 'background/background.jpg'
              },
              caption: [
-              '〔*AVAILABLE COMMANDS*〕',
-              '- *.menu*',
-              '-',
-              '- *.bugmenu*',
-              '-',
-              '- *.ping*',
-              '-',
-              '💡 Type a command above to get started.'
+              '╭━━━〔 ✦ PluzzbugsV1 ✦ 〕━━━╮',
+              '│ .menu - open the menu       │',
+              '│                             │',
+              '│ .bugmenu - open bug menu    │',
+              '│                             │',
+              '│ .ping - check the bot       │',
+              '│                             │',
+              '╰━━━━━━━━━━━━━━━━━━━━━━━╯'
             ].join('\n')
           })
           break
