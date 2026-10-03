@@ -121,16 +121,16 @@ async function startBot() {
         case 'menu':
           await sock.sendMessage(jid, {
              image: {
-               url: 'https://github.com/Momogi12345/pluzzbugs/blob/main/background/background.jpg'
+               url: 'https://mmg.whatsapp.net/o1/v/t24/f2/m237/AQMV_H61O18fbxf1zFE-Vm3g5t3YXmTyXcmEmlRv98nQFmgpl8iwvgbi7MvWniMd7Bc17vvG1Yvs3kLp7grrLs-6qsQPceaxN47uwzrX7g?ccb=9-4&oh=01_Q5Aa5wG658L_47gf5xrapTYlN4CVoSqG-48g39bdNYK7aUukPg&oe=6AE8D512&_nc_sid=e6ed6c&mms3=true'
              },
              caption: [
               '╭━━━〔 ✦ PluzzbugsV1 ✦ 〕━━━╮',
-              '.menu - open the menu',
-              '',
-              '.bugmenu - open bug menu',
-              '',
-              '.ping - check the bot',
-              '',
+              '│',
+              '│ .menu - 📖open the menu',
+              '│ .bugmenu - ☠️open bug menu',
+              '│ .ping - 📶check the bot status',
+              '│',
+              '╰━━━━',
             ].join('\n')
           })
           break
