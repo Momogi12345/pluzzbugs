@@ -120,8 +120,8 @@ async function startBot() {
       switch (command) {
         case 'menu':
           await sock.sendMessage(jid, {
-             vidio: {
-               url: '.background/background.mp4'
+             video: {
+               url: 'background/background.mp4'
              },
              caption: [
               '📋 *AVAILABLE COMMANDS*',
