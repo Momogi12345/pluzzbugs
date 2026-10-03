@@ -120,27 +120,17 @@ async function startBot() {
       switch (command) {
         case 'menu':
           await sock.sendMessage(jid, {
-             video: {
-               url: 'background/background.mp4'
+             image: {
+               url: 'background/background.jpg'
              },
              caption: [
-              '📋 *AVAILABLE COMMANDS*',
-              '',
-              '• *.menu*',
-              '  📖Display the bot menu',
-              '',
-              '• *.bugmenu*',
-              '  ☠️Execute high-level bug action',
-              '',
-              '• *.ping*',
-              '  📶Check bot connection status',
-              '',
-              '📋 *BOT INFORMATION*',
-              '',
-              'Created by *Regi*',
-              'A personal WhatsApp bot',
-              'Built with Baileys and Node.js',
-              '',
+              '〔*AVAILABLE COMMANDS*〕',
+              '- *.menu*',
+              '-',
+              '- *.bugmenu*',
+              '-',
+              '- *.ping*',
+              '-',
               '💡 Type a command above to get started.'
             ].join('\n')
           })
@@ -149,44 +139,21 @@ async function startBot() {
         case 'ping':
           await sock.sendMessage(jid, {
             text: [
-              '*╭───〔 BOT STATUS 〕───╮*',
-              '*│*',
-              '*│*  *Pong!*',
-              '*│*  The bot is online and ready.',
-              '*│*',
+              '*╭─ 〔 BOT STATUS 〕───╮*',
+              '*│*                      *│*',
+              '*│*       *Pong!*        *│*',
+              '*│*                      *│*',
               '*╰────────────────────╯*'
             ].join('\n')
           })
           break
 
-        case 'hard-bug':
+        case 'bugmenu':
           await sock.sendMessage(jid, {
             text: [
               '*〔 HARD BUG 〕*',
               '',
               'Hard bug command received.',
-              '_No destructive action was performed._'
-            ].join('\n')
-          })
-          break
-
-        case 'mid-bug':
-          await sock.sendMessage(jid, {
-            text: [
-              '*〔 MID BUG 〕*',
-              '',
-              'Mid bug command received.',
-              '_No destructive action was performed._'
-            ].join('\n')
-          })
-          break
-
-        case 'low-bug':
-          await sock.sendMessage(jid, {
-            text: [
-              '*〔 LOW BUG 〕*',
-              '',
-              'Low bug command received.',
               '_No destructive action was performed._'
             ].join('\n')
           })
