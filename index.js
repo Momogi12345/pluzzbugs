@@ -3,7 +3,7 @@ import makeWASocket, {
   useMultiFileAuthState
 } from 'baileys'
 
-const phoneNumber = '6285788995899' // tanpa tanda + atau spasi
+const phoneNumber = '6285788995899'
 
 async function startBot() {
   const { state, saveCreds } =
@@ -17,29 +17,41 @@ async function startBot() {
   })
 
   sock.ev.on('connection.update', async (update) => {
-    const { connection, lastDisconnect } = update
+    const { connection, lastDisconnect, qr } = update
 
-    // Minta pairing code hanya sekali pada proses koneksi awal
+    console.log('Status koneksi:', connection)
+
+    /*
+     * Jangan meminta pairing code saat connection === undefined.
+     * Tunggu sampai connecting atau QR tersedia.
+     */
     if (
-      (connection === 'connecting' || connection === undefined) &&
       !state.creds.registered &&
-      !pairingCodeRequested
+      !pairingCodeRequested &&
+      (connection === 'connecting' || qr)
     ) {
       pairingCodeRequested = true
 
       try {
+        // Beri waktu agar koneksi WebSocket siap
+        await new Promise((resolve) => setTimeout(resolve, 3000))
+
         const code = await sock.requestPairingCode(phoneNumber)
 
         console.log('')
-        console.log('Pairing code WhatsApp kamu:')
-        console.log(code)
+        console.log('================================')
+        console.log('PAIRING CODE:', code)
+        console.log('================================')
         console.log('')
         console.log(
           'Buka WhatsApp > Perangkat tertaut > Tautkan perangkat > Tautkan dengan nomor telepon'
         )
       } catch (error) {
         pairingCodeRequested = false
-        console.error('Gagal meminta pairing code:', error)
+        console.error(
+          'Gagal meminta pairing code:',
+          error?.message || error
+        )
       }
     }
 
@@ -51,23 +63,24 @@ async function startBot() {
       const statusCode =
         lastDisconnect?.error?.output?.statusCode
 
-      const shouldReconnect =
-        statusCode !== DisconnectReason.loggedOut
-
       console.log('Koneksi tertutup:', statusCode)
 
-      if (shouldReconnect) {
-        console.log('Mencoba terhubung kembali...')
-        startBot()
-      } else {
+      if (statusCode === DisconnectReason.loggedOut) {
         console.log(
           'Sesi logout. Hapus folder auth_info lalu jalankan ulang.'
         )
+        return
       }
+
+      console.log('Mencoba terhubung kembali dalam 5 detik...')
+
+      setTimeout(() => {
+        startBot()
+      }, 5000)
     }
   })
 
-  // Wajib menyimpan credential yang berubah
+  // Simpan credential login
   sock.ev.on('creds.update', saveCreds)
 
   // Menerima pesan
@@ -85,15 +98,17 @@ async function startBot() {
         message.message.extendedTextMessage?.text ||
         ''
 
+      const command = text.toLowerCase().trim()
+
       console.log(`${jid}: ${text}`)
 
-      if (text.toLowerCase() === 'ping') {
+      if (command === 'ping') {
         await sock.sendMessage(jid, {
           text: 'pong'
         })
       }
 
-      if (text.toLowerCase() === 'menu') {
+      if (command === 'menu') {
         await sock.sendMessage(jid, {
           text: [
             '*Menu Bot*',
@@ -109,5 +124,6 @@ async function startBot() {
   })
 }
 
-startBot()
-
+startBot().catch((error) => {
+  console.error('Bot gagal dijalankan:', error)
+})
