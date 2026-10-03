@@ -120,19 +120,37 @@ async function startBot() {
       switch (command) {
         case 'menu':
           await sock.sendMessage(jid, {
-            text: [
-              '*╭───〔 BOT MENU 〕───╮*',
-              '*│*',
-              '*│*  *Available commands:*',
-              '*│*  • *.menu* — show this menu',
-              '*│*  • *.ping* — check bot status',
-              '*│*  • *.hard-bug* — hard bug action',
-              '*│*  • *.mid-bug* — medium bug action',
-              '*│*  • *.low-bug* — low bug action',
-              '*│*',
-              '*╰──────────────────╯*',
+             text: [
+              '╭━━━━━━━━━━━━━━━━━━━━╮',
+              '     🤖 *BOT MENU*    ',
+              '╰━━━━━━━━━━━━━━━━━━━━╯',
               '',
-              '_Type a command from the list above._'
+              '📋 *AVAILABLE COMMANDS*',
+              '',
+              '• *.menu*',
+              '  📖Display the bot menu',
+              '',
+              '• *.ping*',
+              '  📶Check bot connection status',
+              '',
+              '• *.hard-bug*',
+              '  ☠️Execute high-level bug action',
+              '',
+              '• *.mid-bug*',
+              '  ☠️Execute medium-level bug action',
+              '',
+              '• *.low-bug*',
+              '  ☠️Execute low-level bug action',
+              '',
+              '╭━━━━━━━━━━━━━━━━━━━━╮',
+              '    BOT INFORMATION   ',
+              '╰━━━━━━━━━━━━━━━━━━━━╯',
+              '',
+              'Created by *Regi*',
+              'A personal WhatsApp bot',
+              'Built with Baileys and Node.js',
+              '',
+              '💡 Type a command above to get started.'
             ].join('\n')
           })
           break
