@@ -121,17 +121,16 @@ async function startBot() {
         case 'menu':
           await sock.sendMessage(jid, {
              image: {
-               url: 'background/background.jpg'
+               url: 'https://github.com/Momogi12345/pluzzbugs/blob/main/background/background.jpg'
              },
              caption: [
               '╭━━━〔 ✦ PluzzbugsV1 ✦ 〕━━━╮',
-              '    .menu - open the menu      ',
-              '                               ',
-              '    .bugmenu - open bug menu   ',
-              '                               ',
-              '    .ping - check the bot      ',
-              '                               ',
-              '╰━━━━━━━━━━━━━━━━━━━━━━━╯'
+              '.menu - open the menu',
+              '',
+              '.bugmenu - open bug menu',
+              '',
+              '.ping - check the bot',
+              '',
             ].join('\n')
           })
           break
