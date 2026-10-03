@@ -125,12 +125,12 @@ async function startBot() {
              },
              caption: [
               '╭━━━〔 ✦ PluzzbugsV1 ✦ 〕━━━╮',
-              '│ .menu - open the menu       │',
-              '│                             │',
-              '│ .bugmenu - open bug menu    │',
-              '│                             │',
-              '│ .ping - check the bot       │',
-              '│                             │',
+              '│ .menu - open the menu      │',
+              '│                            │',
+              '│ .bugmenu - open bug menu   │',
+              '│                            │',
+              '│ .ping - check the bot      │',
+              '│                            │',
               '╰━━━━━━━━━━━━━━━━━━━━━━━╯'
             ].join('\n')
           })
