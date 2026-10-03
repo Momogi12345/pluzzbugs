@@ -3,8 +3,15 @@ import makeWASocket, {
   useMultiFileAuthState
 } from 'baileys'
 
+import P from 'pino'
+
 const phoneNumber = '6285788995899'
 const allowedSender = '6285788995899'
+
+// Keep Baileys internal logs silent.
+const logger = P({
+  level: 'silent'
+})
 
 async function startBot() {
   const { state, saveCreds } =
@@ -14,13 +21,14 @@ async function startBot() {
 
   const sock = makeWASocket({
     auth: state,
+    logger,
     printQRInTerminal: false
   })
 
   sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect, qr } = update
 
-    // Pairing code hanya diminta satu kali saat login pertama.
+    // Request a pairing code only during the first login.
     if (
       !state.creds.registered &&
       !pairingCodeRequested &&
@@ -29,34 +37,41 @@ async function startBot() {
       pairingCodeRequested = true
 
       try {
-        // Beri waktu agar koneksi WebSocket siap.
+        // Give the WebSocket connection time to become ready.
         await new Promise((resolve) => setTimeout(resolve, 3000))
 
         const code = await sock.requestPairingCode(phoneNumber)
 
         console.log(`\nPairing code: ${code}`)
         console.log(
-          'WhatsApp > Perangkat tertaut > Tautkan perangkat > Tautkan dengan nomor telepon\n'
+          'Open WhatsApp > Linked devices > Link a device > Link with phone number\n'
         )
       } catch (error) {
         pairingCodeRequested = false
-        console.error('Gagal meminta pairing code:', error?.message || error)
+        console.error(
+          'Failed to request pairing code:',
+          error?.message || error
+        )
       }
     }
 
     if (connection === 'open') {
-      console.log('Bot berhasil terhubung ke WhatsApp.')
+      console.log('Bot connected to WhatsApp successfully.')
     }
 
     if (connection === 'close') {
       const statusCode = lastDisconnect?.error?.output?.statusCode
 
       if (statusCode === DisconnectReason.loggedOut) {
-        console.error('Sesi logout. Hapus folder auth_info lalu jalankan ulang.')
+        console.error(
+          'The session was logged out. Delete the auth_info folder and run the bot again.'
+        )
         return
       }
 
-      console.error('Koneksi terputus. Mencoba terhubung kembali dalam 5 detik...')
+      console.error(
+        'The connection was closed. Reconnecting in 5 seconds...'
+      )
 
       setTimeout(() => {
         startBot()
@@ -64,24 +79,23 @@ async function startBot() {
     }
   })
 
-  // Simpan credential login.
+  // Save updated login credentials.
   sock.ev.on('creds.update', saveCreds)
 
-  // Hanya memproses pesan dari nomor yang diizinkan.
+  // Receive and process messages.
   sock.ev.on('messages.upsert', async ({ messages, type }) => {
     if (type !== 'notify') return
 
     for (const message of messages) {
       if (!message.message || message.key.fromMe) continue
 
-      // Pada chat pribadi, pengirim ada di remoteJid.
-      // Pada grup, pengirim sebenarnya ada di participant.
+      // For private chats use remoteJid; for groups use participant.
       const senderJid =
         message.key.participant || message.key.remoteJid || ''
 
       const senderNumber = senderJid.split('@')[0]
 
-      // Pesan dari nomor lain diabaikan sepenuhnya tanpa console.log.
+      // Ignore messages from every other number without logging them.
       if (senderNumber !== allowedSender) continue
 
       const jid = message.key.remoteJid
@@ -95,7 +109,7 @@ async function startBot() {
 
       const input = text.trim()
 
-      // Abaikan pesan yang bukan command.
+      // Only process commands that start with a dot.
       if (!input.startsWith('.')) continue
 
       const parts = input.slice(1).trim().split(/\s+/)
@@ -107,13 +121,16 @@ async function startBot() {
             text: [
               '*╭───〔 BOT MENU 〕───╮*',
               '*│*',
-              '*│*  *Perintah tersedia:*',
-              '*│*  • *.menu* — tampilkan menu',
-              '*│*  • *.ping* — cek koneksi bot',
+              '*│*  *Available commands:*',
+              '*│*  • *.menu* — show this menu',
+              '*│*  • *.ping* — check bot status',
+              '*│*  • *.hard-bug* — hard bug action',
+              '*│*  • *.mid-bug* — medium bug action',
+              '*│*  • *.low-bug* — low bug action',
               '*│*',
               '*╰──────────────────╯*',
               '',
-              '_Ketik salah satu command di atas._'
+              '_Type a command from the list above._'
             ].join('\n')
           })
           break
@@ -121,12 +138,45 @@ async function startBot() {
         case 'ping':
           await sock.sendMessage(jid, {
             text: [
-              '*╭───〔 STATUS 〕───╮*',
+              '*╭───〔 BOT STATUS 〕───╮*',
               '*│*',
               '*│*  *Pong!*',
-              '*│*  Bot aktif dan siap menerima pesan.',
+              '*│*  The bot is online and ready.',
               '*│*',
-              '*╰────────────────╯*'
+              '*╰────────────────────╯*'
+            ].join('\n')
+          })
+          break
+
+        case 'hard-bug':
+          await sock.sendMessage(jid, {
+            text: [
+              '*〔 HARD BUG 〕*',
+              '',
+              'Hard bug command received.',
+              '_No destructive action was performed._'
+            ].join('\n')
+          })
+          break
+
+        case 'mid-bug':
+          await sock.sendMessage(jid, {
+            text: [
+              '*〔 MID BUG 〕*',
+              '',
+              'Mid bug command received.',
+              '_No destructive action was performed._'
+            ].join('\n')
+          })
+          break
+
+        case 'low-bug':
+          await sock.sendMessage(jid, {
+            text: [
+              '*〔 LOW BUG 〕*',
+              '',
+              'Low bug command received.',
+              '_No destructive action was performed._'
             ].join('\n')
           })
           break
@@ -134,9 +184,9 @@ async function startBot() {
         default:
           await sock.sendMessage(jid, {
             text: [
-              '*Command tidak tersedia.*',
+              '*Unknown command.*',
               '',
-              'Ketik *.menu* untuk melihat command yang bisa digunakan.'
+              'Type *.menu* to see the available commands.'
             ].join('\n')
           })
       }
@@ -145,5 +195,5 @@ async function startBot() {
 }
 
 startBot().catch((error) => {
-  console.error('Bot gagal dijalankan:', error)
+  console.error('The bot failed to start:', error)
 })
