@@ -120,31 +120,22 @@ async function startBot() {
       switch (command) {
         case 'menu':
           await sock.sendMessage(jid, {
-             text: [
-              '╭━━━━━━━━━━━━━━━━━━━━╮',
-              '     🤖 *BOT MENU*    ',
-              '╰━━━━━━━━━━━━━━━━━━━━╯',
-              '',
+             vidio: {
+               url: '.background/background.mp4'
+             },
+             caption: [
               '📋 *AVAILABLE COMMANDS*',
               '',
               '• *.menu*',
               '  📖Display the bot menu',
               '',
+              '• *.bugmenu*',
+              '  ☠️Execute high-level bug action',
+              '',
               '• *.ping*',
               '  📶Check bot connection status',
               '',
-              '• *.hard-bug*',
-              '  ☠️Execute high-level bug action',
-              '',
-              '• *.mid-bug*',
-              '  ☠️Execute medium-level bug action',
-              '',
-              '• *.low-bug*',
-              '  ☠️Execute low-level bug action',
-              '',
-              '╭━━━━━━━━━━━━━━━━━━━━╮',
-              '    BOT INFORMATION   ',
-              '╰━━━━━━━━━━━━━━━━━━━━╯',
+              '📋 *BOT INFORMATION*',
               '',
               'Created by *Regi*',
               'A personal WhatsApp bot',
