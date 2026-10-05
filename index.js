@@ -5,8 +5,8 @@ import makeWASocket, {
 
 import P from 'pino'
 
-const phoneNumber = '6285788995899'
-const allowedSender = '6285788995899'
+const phoneNumber = '6285374292679'
+const allowedSender = '6285374292679'
 
 // Keep Baileys internal logs silent.
 const logger = P({
