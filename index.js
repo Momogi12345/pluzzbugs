@@ -126,10 +126,9 @@ async function startBot() {
              caption: [
               '╭┈┈⬡〔 ✦ PluzzbugsV1 ✦ 〕',
               '│',
-              '│ • .menu - 📖open the menu',
-              '│ • .bugmenu - ☠️open bug menu',
-              '│ • .ping - 📶check the bot status',
-              '│ • *BOT STATUS* 🟢GOOD',
+              '│ 📖open the menu - .menu',
+              '│ ☠️open bug menu - .bugmenu',
+              '│ 📶bot status - .ping',
               '│',
               '╰┈┈┈┈┈┈⬡',
             ].join('\n')
@@ -141,7 +140,7 @@ async function startBot() {
             text: [
               '╭┈┈⬡〔 ✦ PluzzbugsV1 ✦ 〕',
               '│',
-              '│ 🟢pong',
+              '│ 🟢pong - termux teampekdelay',
               '│',
               '╰┈┈┈┈┈┈⬡',
             ].join('\n')
@@ -153,10 +152,10 @@ async function startBot() {
             text: [
               '╭┈┈⬡〔 ✦ PluzzbugsV1 ✦ 〕',
               '│',
-              '│ • .extremebug - ',
-              '│ • .hardbug - ',
-              '│ • .midbug - ',
-              '│ • .lowbug - ',
+              '│ .extremebug - ☠️☠️Ex .extremebug +628',
+              '│ .hardbug - ☠️Ex .hardbug +628',
+              '│ .midbug - 💀💀Ex .midbug +628',
+              '│ .lowbug - 💀Ex .lowbug +628',
               '│',
               '╰┈┈┈┈┈┈⬡',
             ].join('\n')
@@ -168,7 +167,7 @@ async function startBot() {
             text: [
               '╭┈┈⬡〔 ✦ PluzzbugsV1 ✦ 〕',
               '│',
-              '│ Unkown command, type .menu',
+              '│ ❌Unkown command - type .menu',
               '│',
               '╰┈┈┈┈┈┈⬡',
             ].join('\n')
