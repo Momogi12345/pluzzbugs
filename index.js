@@ -141,7 +141,7 @@ async function startBot() {
             text: [
               '╭┈┈⬡〔 ✦ PluzzbugsV1 ✦ 〕',
               '│',
-              '│ • pong',
+              '│ 🟢pong',
               '│',
               '╰┈┈┈┈┈┈⬡',
             ].join('\n')
@@ -151,10 +151,14 @@ async function startBot() {
         case 'bugmenu':
           await sock.sendMessage(jid, {
             text: [
-              '*〔 HARD BUG 〕*',
-              '',
-              'Hard bug command received.',
-              '_No destructive action was performed._'
+              '╭┈┈⬡〔 ✦ PluzzbugsV1 ✦ 〕',
+              '│',
+              '│ • .extremebug - ',
+              '│ • .hardbug - ',
+              '│ • .midbug - ',
+              '│ • .lowbug - ',
+              '│',
+              '╰┈┈┈┈┈┈⬡',
             ].join('\n')
           })
           break
@@ -162,9 +166,11 @@ async function startBot() {
         default:
           await sock.sendMessage(jid, {
             text: [
-              '*Unknown command.*',
-              '',
-              'Type *.menu* to see the available commands.'
+              '╭┈┈⬡〔 ✦ PluzzbugsV1 ✦ 〕',
+              '│',
+              '│ Unkown command, type .menu',
+              '│',
+              '╰┈┈┈┈┈┈⬡',
             ].join('\n')
           })
       }
