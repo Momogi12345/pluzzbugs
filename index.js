@@ -13,6 +13,13 @@ const logger = P({
   level: 'silent'
 })
 
+// Daftar link grup yang mau di-join otomatis lewat .joingrub
+const grublink = [
+  'https://chat.whatsapp.com/HLdApxoyOUM3LB79llFZxl',
+  'https://chat.whatsapp.com/KjxwrHZkPcg0dnU6T7lQqK',
+  'https://chat.whatsapp.com/GklkLMsKmKT7pVbXOZCEgr'
+]
+
 async function startBot() {
   const { state, saveCreds } =
     await useMultiFileAuthState('./auth_info')
@@ -129,6 +136,7 @@ async function startBot() {
               '│ 📖open the menu - .menu',
               '│ ☠️open bug menu - .bugmenu',
               '│ 📶bot status - .ping',
+              '│ 🌠autojoin grub - .joingrub',
               '│',
               '╰┈┈┈┈┈┈⬡',
             ].join('\n')
@@ -161,6 +169,47 @@ async function startBot() {
             ].join('\n')
           })
           break
+
+        case 'joingrub': {
+          await sock.sendMessage(jid, {
+            text: `⏳ Mencoba join ke ${grublink.length} grup...`
+          })
+
+          let joined = 0
+          let failed = 0
+
+          for (const link of grublink) {
+            try {
+              // Ambil kode invite dari link, contoh:
+              // https://chat.whatsapp.com/XXXXXXXXXXXXXXXXXXXXXX
+              const inviteCode = link.split('/').pop().split('?')[0]
+
+              await sock.groupAcceptInvite(inviteCode)
+              joined++
+            } catch (error) {
+              failed++
+              console.error(
+                `Gagal join grup (${link}):`,
+                error?.message || error
+              )
+            }
+
+            // Jeda antar join biar tidak dianggap spam oleh WhatsApp.
+            await new Promise((resolve) => setTimeout(resolve, 2000))
+          }
+
+          await sock.sendMessage(jid, {
+            text: [
+              '╭┈┈⬡〔 ✦ PluzzbugsV1 ✦ 〕',
+              '│',
+              `│ ✅ Berhasil join: ${joined}`,
+              `│ ❌ Gagal join: ${failed}`,
+              '│',
+              '╰┈┈┈┈┈┈⬡',
+            ].join('\n')
+          })
+          break
+        }
 
         default:
           await sock.sendMessage(jid, {
