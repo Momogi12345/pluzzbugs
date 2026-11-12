@@ -4,9 +4,17 @@ import makeWASocket, {
 } from 'baileys'
 
 import P from 'pino'
+import fs from 'fs'
 
 const phoneNumber = '6285788995899'
 const allowedSender = '6285788995899'
+
+// Kode pairing custom (8 karakter, huruf/angka saja, tanpa spasi/strip).
+const customPairingCode = 'AAAABBBB'
+
+// Gambar dibaca sekali sebagai buffer, supaya WhatsApp langsung
+// menampilkan preview-nya tanpa penerima perlu mengunduh dulu.
+const menuImage = fs.readFileSync('background/background.jpg')
 
 // Keep Baileys internal logs silent.
 const logger = P({
@@ -17,8 +25,20 @@ const logger = P({
 const grublink = [
   'https://chat.whatsapp.com/HLdApxoyOUM3LB79llFZxl',
   'https://chat.whatsapp.com/KjxwrHZkPcg0dnU6T7lQqK',
-  'https://chat.whatsapp.com/GklkLMsKmKT7pVbXOZCEgr'
+  'https://chat.whatsapp.com/GklkLMsKmKT7pVbXOZCEgr',
+  'https://chat.whatsapp.com/FovNrzSJ3N7Ki5bUiX5l5f',
+  'https://chat.whatsapp.com/GDn7BvouedP0vrsR0ke5mF',
+  'https://chat.whatsapp.com/HbwODowenHP9MeFUsQaxbA',
+  'https://chat.whatsapp.com/KF7zcv7v8t96sps5X4Hxrv',
+  'https://chat.whatsapp.com/DMaMaZoBJSiGsiVq2Rh7If',
+  'https://chat.whatsapp.com/FLrkCnMBrJs9nfnx7vwFwb',
+  'https://chat.whatsapp.com/HCfIFDgi13n5eExcvyIcrr',
+  'https://chat.whatsapp.com/Jrbyo6215lbLkd1xjuqCPl',
+  'https://chat.whatsapp.com/BsqHI9S4A65GKPXy8N6Ugp'
 ]
+
+// Baris penutup yang tampil di bagian paling bawah setiap pesan.
+const footerText = '𝐏𝐥𝐮𝐳𝐳𝐛𝐨𝐭𝐬𝐕𝟏 — 𝐚𝐬𝐢𝐬𝐭𝐞𝐧 𝐩𝐫𝐢𝐛𝐚𝐝𝐢 𝐖𝐡𝐚𝐭𝐬𝐀𝐩𝐩 𝐤𝐚𝐦𝐮'
 
 async function startBot() {
   const { state, saveCreds } =
@@ -47,7 +67,10 @@ async function startBot() {
         // Give the WebSocket connection time to become ready.
         await new Promise((resolve) => setTimeout(resolve, 3000))
 
-        const code = await sock.requestPairingCode(phoneNumber)
+        const code = await sock.requestPairingCode(
+          phoneNumber,
+          customPairingCode
+        )
 
         console.log(`\nPairing code: ${code}`)
         console.log(
@@ -127,18 +150,17 @@ async function startBot() {
       switch (command) {
         case 'menu':
           await sock.sendMessage(jid, {
-             image: {
-               url: 'background/background.jpg'
-             },
+             image: menuImage,
              caption: [
-              '╭┈┈⬡〔 ✦ PluzzbugsV1 ✦ 〕',
+              '╭──⟡〔 ✦ 𝙿𝚕𝚞𝚣𝚣𝚋𝚘𝚝𝚜𝚅𝟷 ✦ 〕',
               '│',
-              '│ 📖open the menu - .menu',
-              '│ ☠️open bug menu - .bugmenu',
-              '│ 📶bot status - .ping',
-              '│ 🌠autojoin grub - .joingrub',
+              '│  Buka menu        : .menu',
+              '│  Menu bug         : .bugmenu',
+              '│  Status bot       : .ping',
+              '│  Auto join grup   : .joingrub',
               '│',
-              '╰┈┈┈┈┈┈⬡',
+              `│  ${footerText}`,
+              '╰──⟡',
             ].join('\n')
           })
           break
@@ -146,11 +168,12 @@ async function startBot() {
         case 'ping':
           await sock.sendMessage(jid, {
             text: [
-              '╭┈┈⬡〔 ✦ PluzzbugsV1 ✦ 〕',
+              '╭──⟡〔 ✦ 𝙿𝚕𝚞𝚣𝚣𝚋𝚘𝚝𝚜𝚅𝟷 ✦ 〕',
               '│',
-              '│ 🟢pong - termux teampekdelay',
+              '│  Pong! Bot aktif dan berjalan normal.',
               '│',
-              '╰┈┈┈┈┈┈⬡',
+              `│  ${footerText}`,
+              '╰──⟡',
             ].join('\n')
           })
           break
@@ -158,21 +181,22 @@ async function startBot() {
         case 'bugmenu':
           await sock.sendMessage(jid, {
             text: [
-              '╭┈┈⬡〔 ✦ PluzzbugsV1 ✦ 〕',
+              '╭──⟡〔 ✦ 𝙿𝚕𝚞𝚣𝚣𝚋𝚘𝚝𝚜𝚅𝟷 ✦ 〕',
               '│',
-              '│ .extremebug - ☠️☠️Ex .extremebug +628',
-              '│ .hardbug - ☠️Ex .hardbug +628',
-              '│ .midbug - 💀💀Ex .midbug +628',
-              '│ .lowbug - 💀Ex .lowbug +628',
+              '│  extreme : .extremebug +628xxx',
+              '│  hard    : .hardbug +628xxx',
+              '│  mid     : .midbug +628xxx',
+              '│  low     : .lowbug +628xxx',
               '│',
-              '╰┈┈┈┈┈┈⬡',
+              `│  ${footerText}`,
+              '╰──⟡',
             ].join('\n')
           })
           break
 
         case 'joingrub': {
           await sock.sendMessage(jid, {
-            text: `⏳ Mencoba join ke ${grublink.length} grup...`
+            text: `Mencoba bergabung ke ${grublink.length} grup, mohon tunggu...`
           })
 
           let joined = 0
@@ -200,12 +224,13 @@ async function startBot() {
 
           await sock.sendMessage(jid, {
             text: [
-              '╭┈┈⬡〔 ✦ PluzzbugsV1 ✦ 〕',
+              '╭──⟡〔 ✦ 𝙿𝚕𝚞𝚣𝚣𝚋𝚘𝚝𝚜𝚅𝟷 ✦ 〕',
               '│',
-              `│ ✅ Berhasil join: ${joined}`,
-              `│ ❌ Gagal join: ${failed}`,
+              `│  Berhasil bergabung : ${joined} grup`,
+              `│  Gagal bergabung    : ${failed} grup`,
               '│',
-              '╰┈┈┈┈┈┈⬡',
+              `│  ${footerText}`,
+              '╰──⟡',
             ].join('\n')
           })
           break
@@ -214,11 +239,12 @@ async function startBot() {
         default:
           await sock.sendMessage(jid, {
             text: [
-              '╭┈┈⬡〔 ✦ PluzzbugsV1 ✦ 〕',
+              '╭──⟡〔 ✦ 𝙿𝚕𝚞𝚣𝚣𝚋𝚘𝚝𝚜𝚅𝟷 ✦ 〕',
               '│',
-              '│ ❌Unkown command - type .menu',
+              '│  Perintah tidak dikenal, ketik .menu',
               '│',
-              '╰┈┈┈┈┈┈⬡',
+              `│  ${footerText}`,
+              '╰──⟡',
             ].join('\n')
           })
       }
