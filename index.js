@@ -10,7 +10,7 @@ const phoneNumber = '6285788995899'
 const allowedSender = '6285788995899'
 
 // Kode pairing custom (8 karakter, huruf/angka saja, tanpa spasi/strip).
-const customPairingCode = 'AAAABBBB'
+const customPairingCode = 'PLZZBOTS'
 
 // Gambar dibaca sekali sebagai buffer, supaya WhatsApp langsung
 // menampilkan preview-nya tanpa penerima perlu mengunduh dulu.
@@ -38,7 +38,7 @@ const grublink = [
 ]
 
 // Baris penutup yang tampil di bagian paling bawah setiap pesan.
-const footerText = '𝐏𝐥𝐮𝐳𝐳𝐛𝐨𝐭𝐬𝐕𝟏 — 𝐚𝐬𝐢𝐬𝐭𝐞𝐧 𝐩𝐫𝐢𝐛𝐚𝐝𝐢 𝐖𝐡𝐚𝐭𝐬𝐀𝐩𝐩 𝐤𝐚𝐦𝐮'
+const footerText = '𝐏𝐥𝐮𝐳𝐳𝐛𝐨𝐭𝐬𝐕𝟏 — 𝐚𝐬𝐢𝐬𝐭𝐞𝐧 𝐩𝐫𝐢𝐛𝐚𝐝𝐢 𝐏𝐥𝐮𝐳𝐳'
 
 async function startBot() {
   const { state, saveCreds } =
