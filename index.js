@@ -9,19 +9,14 @@ import fs from 'fs'
 const phoneNumber = '6285788995899'
 const allowedSender = '6285788995899'
 
-// Kode pairing custom (8 karakter, huruf/angka saja, tanpa spasi/strip).
 const customPairingCode = 'PLZZBOTS'
 
-// Gambar dibaca sekali sebagai buffer, supaya WhatsApp langsung
-// menampilkan preview-nya tanpa penerima perlu mengunduh dulu.
 const menuImage = fs.readFileSync('background/background.jpg')
 
-// Keep Baileys internal logs silent.
 const logger = P({
   level: 'silent'
 })
 
-// Daftar link grup yang mau di-join otomatis lewat .joingrub
 const grublink = [
   'https://chat.whatsapp.com/HLdApxoyOUM3LB79llFZxl',
   'https://chat.whatsapp.com/KjxwrHZkPcg0dnU6T7lQqK',
@@ -37,8 +32,10 @@ const grublink = [
   'https://chat.whatsapp.com/BsqHI9S4A65GKPXy8N6Ugp'
 ]
 
-// Baris penutup yang tampil di bagian paling bawah setiap pesan.
-const footerText = '𝐏𝐥𝐮𝐳𝐳𝐛𝐨𝐭𝐬𝐕𝟏 — 𝐚𝐬𝐢𝐬𝐭𝐞𝐧 𝐩𝐫𝐢𝐛𝐚𝐝𝐢 𝐏𝐥𝐮𝐳𝐳'
+const boldDigits = '𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟕𝟖𝟗'
+const bn = (n) => String(n).split('').map((d) => boldDigits[d] ?? d).join('')
+
+const footerText = '𝐏𝐥𝐮𝐳𝐳𝐛𝐨𝐭𝐬𝐕𝟏 - 𝐏𝐥𝐮𝐳𝐳 𝐩𝐞𝐫𝐬𝐨𝐧𝐚𝐥 𝐚𝐬𝐬𝐢𝐬𝐭𝐚𝐧𝐭'
 
 async function startBot() {
   const { state, saveCreds } =
@@ -55,7 +52,6 @@ async function startBot() {
   sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect, qr } = update
 
-    // Request a pairing code only during the first login.
     if (
       !state.creds.registered &&
       !pairingCodeRequested &&
@@ -64,7 +60,6 @@ async function startBot() {
       pairingCodeRequested = true
 
       try {
-        // Give the WebSocket connection time to become ready.
         await new Promise((resolve) => setTimeout(resolve, 3000))
 
         const code = await sock.requestPairingCode(
@@ -109,25 +104,18 @@ async function startBot() {
     }
   })
 
-  // Save updated login credentials.
   sock.ev.on('creds.update', saveCreds)
 
-  // Receive and process messages sent by the account owner, including
-  // commands sent in private chats, the self-chat, and groups.
   sock.ev.on('messages.upsert', async ({ messages, type }) => {
     if (type !== 'notify') return
 
     for (const message of messages) {
       if (!message.message) continue
 
-      // For private chats use remoteJid; for groups use participant.
       const remoteJid = message.key.remoteJid || ''
       const senderJid = message.key.participant || remoteJid
 
       const senderNumber = senderJid.split('@')[0]
-      // `fromMe` means the command was sent by the logged-in account.
-      // This allows commands in the self-chat, private chats, and groups.
-      // Incoming messages are still restricted to the allowed number.
       if (!message.key.fromMe && senderNumber !== allowedSender) continue
 
       const jid = remoteJid
@@ -141,7 +129,6 @@ async function startBot() {
 
       const input = text.trim()
 
-      // Only process commands that start with a dot.
       if (!input.startsWith('.')) continue
 
       const parts = input.slice(1).trim().split(/\s+/)
@@ -152,12 +139,12 @@ async function startBot() {
           await sock.sendMessage(jid, {
              image: menuImage,
              caption: [
-              '╭──⟡〔 ✦ 𝙿𝚕𝚞𝚣𝚣𝚋𝚘𝚝𝚜𝚅𝟷 ✦ 〕',
+              '╭──⟡〔 ✦ 𝐏𝐥𝐮𝐳𝐳𝐛𝐨𝐭𝐬𝐕𝟏 ✦ 〕',
               '│',
-              '│  Buka menu        : .menu',
-              '│  Menu bug         : .bugmenu',
-              '│  Status bot       : .ping',
-              '│  Auto join grup   : .joingrub',
+              '│  𝐎𝐩𝐞𝐧 𝐦𝐞𝐧𝐮        : .𝐦𝐞𝐧𝐮',
+              '│  𝐁𝐮𝐠 𝐦𝐞𝐧𝐮         : .𝐛𝐮𝐠𝐦𝐞𝐧𝐮',
+              '│  𝐁𝐨𝐭 𝐬𝐭𝐚𝐭𝐮𝐬       : .𝐩𝐢𝐧𝐠',
+              '│  𝐀𝐮𝐭𝐨 𝐣𝐨𝐢𝐧 𝐠𝐫𝐨𝐮𝐩  : .𝐣𝐨𝐢𝐧𝐠𝐫𝐮𝐛',
               '│',
               `│  ${footerText}`,
               '╰──⟡',
@@ -168,9 +155,9 @@ async function startBot() {
         case 'ping':
           await sock.sendMessage(jid, {
             text: [
-              '╭──⟡〔 ✦ 𝙿𝚕𝚞𝚣𝚣𝚋𝚘𝚝𝚜𝚅𝟷 ✦ 〕',
+              '╭──⟡〔 ✦ 𝐏𝐥𝐮𝐳𝐳𝐛𝐨𝐭𝐬𝐕𝟏 ✦ 〕',
               '│',
-              '│  Pong! Bot aktif dan berjalan normal.',
+              '│  𝐏𝐨𝐧𝐠! 𝐁𝐨𝐭 𝐢𝐬 𝐚𝐜𝐭𝐢𝐯𝐞 𝐚𝐧𝐝 𝐫𝐮𝐧𝐧𝐢𝐧𝐠 𝐧𝐨𝐫𝐦𝐚𝐥𝐥𝐲.',
               '│',
               `│  ${footerText}`,
               '╰──⟡',
@@ -181,12 +168,12 @@ async function startBot() {
         case 'bugmenu':
           await sock.sendMessage(jid, {
             text: [
-              '╭──⟡〔 ✦ 𝙿𝚕𝚞𝚣𝚣𝚋𝚘𝚝𝚜𝚅𝟷 ✦ 〕',
+              '╭──⟡〔 ✦ 𝐏𝐥𝐮𝐳𝐳𝐛𝐨𝐭𝐬𝐕𝟏 ✦ 〕',
               '│',
-              '│  extreme : .extremebug +628xxx',
-              '│  hard    : .hardbug +628xxx',
-              '│  mid     : .midbug +628xxx',
-              '│  low     : .lowbug +628xxx',
+              '│  𝐞𝐱𝐭𝐫𝐞𝐦𝐞 : .𝐞𝐱𝐭𝐫𝐞𝐦𝐞𝐛𝐮𝐠 +𝟔𝟐𝟖𝐱𝐱𝐱',
+              '│  𝐡𝐚𝐫𝐝    : .𝐡𝐚𝐫𝐝𝐛𝐮𝐠 +𝟔𝟐𝟖𝐱𝐱𝐱',
+              '│  𝐦𝐢𝐝     : .𝐦𝐢𝐝𝐛𝐮𝐠 +𝟔𝟐𝟖𝐱𝐱𝐱',
+              '│  𝐥𝐨𝐰     : .𝐥𝐨𝐰𝐛𝐮𝐠 +𝟔𝟐𝟖𝐱𝐱𝐱',
               '│',
               `│  ${footerText}`,
               '╰──⟡',
@@ -196,7 +183,7 @@ async function startBot() {
 
         case 'joingrub': {
           await sock.sendMessage(jid, {
-            text: `Mencoba bergabung ke ${grublink.length} grup, mohon tunggu...`
+            text: `𝐀𝐭𝐭𝐞𝐦𝐩𝐭𝐢𝐧𝐠 𝐭𝐨 𝐣𝐨𝐢𝐧 ${bn(grublink.length)} 𝐠𝐫𝐨𝐮𝐩𝐬, 𝐩𝐥𝐞𝐚𝐬𝐞 𝐰𝐚𝐢𝐭...`
           })
 
           let joined = 0
@@ -204,8 +191,6 @@ async function startBot() {
 
           for (const link of grublink) {
             try {
-              // Ambil kode invite dari link, contoh:
-              // https://chat.whatsapp.com/XXXXXXXXXXXXXXXXXXXXXX
               const inviteCode = link.split('/').pop().split('?')[0]
 
               await sock.groupAcceptInvite(inviteCode)
@@ -213,21 +198,20 @@ async function startBot() {
             } catch (error) {
               failed++
               console.error(
-                `Gagal join grup (${link}):`,
+                `Failed to join group (${link}):`,
                 error?.message || error
               )
             }
 
-            // Jeda antar join biar tidak dianggap spam oleh WhatsApp.
             await new Promise((resolve) => setTimeout(resolve, 2000))
           }
 
           await sock.sendMessage(jid, {
             text: [
-              '╭──⟡〔 ✦ 𝙿𝚕𝚞𝚣𝚣𝚋𝚘𝚝𝚜𝚅𝟷 ✦ 〕',
+              '╭──⟡〔 ✦ 𝐏𝐥𝐮𝐳𝐳𝐛𝐨𝐭𝐬𝐕𝟏 ✦ 〕',
               '│',
-              `│  Berhasil bergabung : ${joined} grup`,
-              `│  Gagal bergabung    : ${failed} grup`,
+              `│  𝐒𝐮𝐜𝐜𝐞𝐬𝐬𝐟𝐮𝐥𝐥𝐲 𝐣𝐨𝐢𝐧𝐞𝐝 : ${bn(joined)} 𝐠𝐫𝐨𝐮𝐩𝐬`,
+              `│  𝐅𝐚𝐢𝐥𝐞𝐝 𝐭𝐨 𝐣𝐨𝐢𝐧      : ${bn(failed)} 𝐠𝐫𝐨𝐮𝐩𝐬`,
               '│',
               `│  ${footerText}`,
               '╰──⟡',
@@ -239,9 +223,9 @@ async function startBot() {
         default:
           await sock.sendMessage(jid, {
             text: [
-              '╭──⟡〔 ✦ 𝙿𝚕𝚞𝚣𝚣𝚋𝚘𝚝𝚜𝚅𝟷 ✦ 〕',
+              '╭──⟡〔 ✦ 𝐏𝐥𝐮𝐳𝐳𝐛𝐨𝐭𝐬𝐕𝟏 ✦ 〕',
               '│',
-              '│  Perintah tidak dikenal, ketik .menu',
+              '│  𝐔𝐧𝐤𝐧𝐨𝐰𝐧 𝐜𝐨𝐦𝐦𝐚𝐧𝐝, 𝐭𝐲𝐩𝐞 .𝐦𝐞𝐧𝐮',
               '│',
               `│  ${footerText}`,
               '╰──⟡',
