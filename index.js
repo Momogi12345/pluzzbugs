@@ -30,8 +30,29 @@ const grublink = [
   'https://chat.whatsapp.com/FLrkCnMBrJs9nfnx7vwFwb',
   'https://chat.whatsapp.com/HCfIFDgi13n5eExcvyIcrr',
   'https://chat.whatsapp.com/Jrbyo6215lbLkd1xjuqCPl',
-  'https://chat.whatsapp.com/BsqHI9S4A65GKPXy8N6Ugp'
-]
+  'https://chat.whatsapp.com/BsqHI9S4A65GKPXy8N6Ugp',
+  'https://chat.whatsapp.com/CRlrXbfqfkEJKly1xkFXn8',
+  'https://chat.whatsapp.com/EjpITZiDURCG6rmoV12Sw7',
+  'https://chat.whatsapp.com/H4fcJ5N9PCXCkt5YmcuIbu',
+  'https://chat.whatsapp.com/G9iQxaey17OKrBLvdZo16T',
+  'https://chat.whatsapp.com/C4nCn2u3PUCIlm4wcLoIG5',
+  'https://chat.whatsapp.com/Buo5ZA1UDTpJkw0NE6dg6Z',
+  'https://chat.whatsapp.com/EB578aONGEAHGykRq8gEv5',
+  'https://chat.whatsapp.com/KFgBdmPBEVYBBIVj80EA5c',
+  'https://chat.whatsapp.com/C6to0pnp2LkAx7pZ2VRaip',
+  'https://chat.whatsapp.com/5zdN5GsN2ufGfgdcz9ahtU',
+  'https://chat.whatsapp.com/FXJCcgcFXlHC5GkvFEhwmG',
+  'https://chat.whatsapp.com/J6iWgP19A1a0chq6aCVjjE',
+  'https://chat.whatsapp.com/JtW7dg2peyi9aIN8CEG2VI',
+'https://chat.whatsapp.com/invite/C6zG8V46mYW26nn7j1stuf', 'https://chat.whatsapp.com/invite/JtfptnAHICx45nIJt56qi6', 'https://chat.whatsapp.com/invite/Bl5rbzrL2raC2T3JlmtrtR', 'https://chat.whatsapp.com/invite/HMJhcBq7G7V2gnGEPIv8p1', 'https://chat.whatsapp.com/invite/LiFPFFGq4abBfWQQtKW4Ok', 'https://chat.whatsapp.com/invite/JXQmqpsErxe6wTq4UkzcFw', 'https://chat.whatsapp.com/invite/GzpOHkPLDESBJCwHupMffY', 'https://chat.whatsapp.com/invite/FogziwHqByKCr9EbNsb98j',
+  'https://chat.whatsapp.com/IiukjbJGj8s1SzrY44N4DS',
+  'https://chat.whatsapp.com/FyYrV6CkwSGLtNfbD9eK5S',
+  'https://chat.whatsapp.com/BhGS5OidyOZ9bRut8aLphX',
+  'https://chat.whatsapp.com/Jxq6p9DBlWeGPzgniwkXXe',
+  'https://chat.whatsapp.com/FbL9NuT9PVrKpeayUxfsuO',
+  'https://chat.whatsapp.com/Chgl9S6tIUD7zzaqtuXa6R',
+  'https://chat.whatsapp.com/B4rTvnIG9hBCnbcuw5WTc2'
+];
 
 function formatWaktu() {
   const now = new Date()
